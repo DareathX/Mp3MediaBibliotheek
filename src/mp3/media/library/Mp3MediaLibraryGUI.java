@@ -5,9 +5,11 @@
  */
 package mp3.media.library;
 
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
- * @author sergi
+ * @author sergi & wilco
  */
 public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
 
@@ -17,7 +19,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     public Mp3MediaLibraryGUI() {
         initComponents();
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -27,6 +29,10 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jMenuItemFavorite = new javax.swing.JMenuItem();
+        jMenuItemRename = new javax.swing.JMenuItem();
+        jMenuItemDelete = new javax.swing.JMenuItem();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -34,6 +40,30 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+
+        jMenuItemFavorite.setText("Favorite");
+        jMenuItemFavorite.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemFavoriteActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemFavorite);
+
+        jMenuItemRename.setText("Rename");
+        jMenuItemRename.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemRenameActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemRename);
+
+        jMenuItemDelete.setText("Delete");
+        jMenuItemDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDeleteActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItemDelete);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mp3 Library");
@@ -52,15 +82,32 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
                 "Name", "Title", "Artist", "Year", "Genre"
             }
-        ));
-        jScrollPane2.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, false, false, false, false
+            };
 
-        jTextField1.setText("jTextField1");
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jTable1MouseReleased(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTable1);
 
         jLabel1.setText("Zoek:");
 
@@ -115,6 +162,30 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jMenuItemDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDeleteActionPerformed
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        int[] delete = jTable1.getSelectedRows();
+        for (int i = 0; i < delete.length; i++) {     
+        model.removeRow((delete[i]-i));
+        }
+    }//GEN-LAST:event_jMenuItemDeleteActionPerformed
+
+    private void jTable1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseReleased
+        if (evt.isPopupTrigger()) {
+            jPopupMenu1.show(this, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_jTable1MouseReleased
+
+    private void jMenuItemRenameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRenameActionPerformed
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        
+        
+    }//GEN-LAST:event_jMenuItemRenameActionPerformed
+
+    private void jMenuItemFavoriteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFavoriteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItemFavoriteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -155,6 +226,10 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenuItem jMenuItemDelete;
+    private javax.swing.JMenuItem jMenuItemFavorite;
+    private javax.swing.JMenuItem jMenuItemRename;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
