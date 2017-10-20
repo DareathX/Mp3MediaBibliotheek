@@ -20,7 +20,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     public Mp3MediaLibraryGUI() {
         initComponents();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -160,7 +160,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenuItemDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDeleteActionPerformed
@@ -185,9 +185,8 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableSongListMouseReleased
 
     private void jMenuItemRenameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRenameActionPerformed
-        JTable popup = (JTable) evt.getSource();
-        
-        
+        jTableSongList.editCellAt(jTableSongList.getSelectedRow(), 0);
+
     }//GEN-LAST:event_jMenuItemRenameActionPerformed
 
     private void jMenuItemFavoriteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFavoriteActionPerformed
