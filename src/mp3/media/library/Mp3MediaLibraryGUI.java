@@ -5,6 +5,7 @@
  */
 package mp3.media.library;
 
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -29,7 +30,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jPopupMenuFRD = new javax.swing.JPopupMenu();
         jMenuItemFavorite = new javax.swing.JMenuItem();
         jMenuItemRename = new javax.swing.JMenuItem();
         jMenuItemDelete = new javax.swing.JMenuItem();
@@ -37,9 +38,9 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        jTableSongList = new javax.swing.JTable();
+        jTextFieldSearchField = new javax.swing.JTextField();
+        jLabelSearch = new javax.swing.JLabel();
 
         jMenuItemFavorite.setText("Favorite");
         jMenuItemFavorite.addActionListener(new java.awt.event.ActionListener() {
@@ -47,7 +48,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 jMenuItemFavoriteActionPerformed(evt);
             }
         });
-        jPopupMenu1.add(jMenuItemFavorite);
+        jPopupMenuFRD.add(jMenuItemFavorite);
 
         jMenuItemRename.setText("Rename");
         jMenuItemRename.addActionListener(new java.awt.event.ActionListener() {
@@ -55,7 +56,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 jMenuItemRenameActionPerformed(evt);
             }
         });
-        jPopupMenu1.add(jMenuItemRename);
+        jPopupMenuFRD.add(jMenuItemRename);
 
         jMenuItemDelete.setText("Delete");
         jMenuItemDelete.addActionListener(new java.awt.event.ActionListener() {
@@ -63,7 +64,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 jMenuItemDeleteActionPerformed(evt);
             }
         });
-        jPopupMenu1.add(jMenuItemDelete);
+        jPopupMenuFRD.add(jMenuItemDelete);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mp3 Library");
@@ -80,7 +81,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
 
         jButton3.setText("Favoriet");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableSongList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -102,14 +103,14 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jTableSongList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jTable1MouseReleased(evt);
+                jTableSongListMouseReleased(evt);
             }
         });
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPane2.setViewportView(jTableSongList);
 
-        jLabel1.setText("Zoek:");
+        jLabelSearch.setText("Search:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -125,10 +126,10 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 .addGap(180, 180, 180))
             .addGroup(layout.createSequentialGroup()
                 .addGap(235, 235, 235)
-                .addComponent(jLabel1)
+                .addComponent(jLabelSearch)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(302, Short.MAX_VALUE))
+                .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(291, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2)
@@ -142,11 +143,11 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(38, 38, 38)
-                        .addComponent(jLabel1)
+                        .addComponent(jLabelSearch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
@@ -163,21 +164,28 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenuItemDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDeleteActionPerformed
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        int[] delete = jTable1.getSelectedRows();
-        for (int i = 0; i < delete.length; i++) {     
-        model.removeRow((delete[i]-i));
+        DefaultTableModel model = (DefaultTableModel) jTableSongList.getModel();
+        int[] delete = jTableSongList.getSelectedRows();
+        for (int i = 0; i < delete.length; i++) {
+            model.removeRow((delete[i] - i));
         }
     }//GEN-LAST:event_jMenuItemDeleteActionPerformed
 
-    private void jTable1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseReleased
+    private void jTableSongListMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableSongListMouseReleased
         if (evt.isPopupTrigger()) {
-            jPopupMenu1.show(this, evt.getX(), evt.getY());
+            JTable popup = (JTable) evt.getSource();
+            int row = popup.rowAtPoint(evt.getPoint());
+            int column = popup.columnAtPoint(evt.getPoint());
+
+            if (!popup.isRowSelected(row)) {
+                popup.changeSelection(row, column, false, false);
+            }
+            jPopupMenuFRD.show(evt.getComponent(), evt.getX(), evt.getY());
         }
-    }//GEN-LAST:event_jTable1MouseReleased
+    }//GEN-LAST:event_jTableSongListMouseReleased
 
     private void jMenuItemRenameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRenameActionPerformed
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        JTable popup = (JTable) evt.getSource();
         
         
     }//GEN-LAST:event_jMenuItemRenameActionPerformed
@@ -225,13 +233,13 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabelSearch;
     private javax.swing.JMenuItem jMenuItemDelete;
     private javax.swing.JMenuItem jMenuItemFavorite;
     private javax.swing.JMenuItem jMenuItemRename;
-    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JPopupMenu jPopupMenuFRD;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable jTableSongList;
+    private javax.swing.JTextField jTextFieldSearchField;
     // End of variables declaration//GEN-END:variables
 }
