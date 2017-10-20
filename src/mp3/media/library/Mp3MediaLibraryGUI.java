@@ -6,6 +6,7 @@
 package mp3.media.library;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,18 +23,22 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         initComponents();
         getFilesName();
     }
-    public void getFilesName()
-    {
-        File folder = new File(System.getProperty("user.home").concat("\\Music\\netbeansmusic"));
-        File[] listOfFiles = folder.listFiles();
-        DefaultTableModel model =    (DefaultTableModel)jTableSongList.getModel();
+
+    public void getFilesName() {
+       FilenameFilter filter = new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".mp3");
+            }
+        };
+        File folder = new File(System.getProperty("user.home").concat("\\Music"));
+        File[] listOfFiles = folder.listFiles(filter);
+        DefaultTableModel model = (DefaultTableModel) jTableSongList.getModel();
         Object[] row = new Object[1];
-        for(int i = 0; i < listOfFiles.length; i++)
-        {
+        for (int i = 0; i < listOfFiles.length; i++) {
             row[0] = listOfFiles[i].getName();
             model.addRow(row);
         }
-    }    
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
