@@ -8,6 +8,7 @@ package mp3.media.library;
 import java.io.File;
 import java.io.FilenameFilter;
 import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -63,6 +64,12 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         }
 
     }
+    
+    public void search(String activeSearch) {
+        TableRowSorter<DefaultTableModel> search = new TableRowSorter<>(model);
+        jTableSongList.setRowSorter(search);
+        search.setRowFilter(RowFilter.regexFilter("(?i)" + activeSearch));
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -77,14 +84,15 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jMenuItemFavorite = new javax.swing.JMenuItem();
         jMenuItemRename = new javax.swing.JMenuItem();
         jMenuItemDelete = new javax.swing.JMenuItem();
+        jMenuItemRefresh = new javax.swing.JMenuItem();
         jButtonDelete = new javax.swing.JButton();
         jButtonRename = new javax.swing.JButton();
         jButtonFavorite = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableSongList = new javax.swing.JTable();
         jTextFieldSearchField = new javax.swing.JTextField();
-        jLabelSearch = new javax.swing.JLabel();
         jButtonRefresh = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         jMenuItemFavorite.setText("Favorite");
         jMenuItemFavorite.addActionListener(new java.awt.event.ActionListener() {
@@ -109,6 +117,16 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
             }
         });
         jPopupMenuFRD.add(jMenuItemDelete);
+
+        jMenuItemRefresh.setText("Refresh");
+        jMenuItemRefresh.setActionCommand("Refresh");
+        jMenuItemRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemRefreshActionPerformed(evt);
+            }
+        });
+        jPopupMenuFRD.add(jMenuItemRefresh);
+        jMenuItemRefresh.getAccessibleContext().setAccessibleName("Refresh");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mp3 Library");
@@ -158,7 +176,16 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jTableSongList);
 
-        jLabelSearch.setText("Search:");
+        jTextFieldSearchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldSearchFieldActionPerformed(evt);
+            }
+        });
+        jTextFieldSearchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldSearchFieldKeyReleased(evt);
+            }
+        });
 
         jButtonRefresh.setText("Refresh");
         jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
@@ -166,6 +193,9 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 jButtonRefreshActionPerformed(evt);
             }
         });
+
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel1.setText("Search :");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -175,38 +205,41 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
-                        .addComponent(jButtonRefresh)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonRename)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                        .addComponent(jLabelSearch)
-                        .addGap(30, 30, 30)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButtonRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonRename, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButtonFavorite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(123, 123, 123)
-                        .addComponent(jButtonFavorite)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonDelete)
-                        .addGap(20, 20, 20))))
+                        .addGap(21, 21, 21))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButtonRefresh)
-                        .addComponent(jButtonRename)
-                        .addComponent(jButtonFavorite)
-                        .addComponent(jButtonDelete)
-                        .addComponent(jLabelSearch))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonRefresh)
+                            .addComponent(jButtonFavorite)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonRename)
+                            .addComponent(jButtonDelete)))
                     .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
@@ -259,6 +292,19 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jMenuItemRenameActionPerformed(evt);
     }//GEN-LAST:event_jButtonRenameActionPerformed
 
+    private void jMenuItemRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRefreshActionPerformed
+        jButtonRefreshActionPerformed(evt);
+    }//GEN-LAST:event_jMenuItemRefreshActionPerformed
+
+    private void jTextFieldSearchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldSearchFieldActionPerformed
+
+    }//GEN-LAST:event_jTextFieldSearchFieldActionPerformed
+
+    private void jTextFieldSearchFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSearchFieldKeyReleased
+        String activeSearch = jTextFieldSearchField.getText();
+        search(activeSearch);
+    }//GEN-LAST:event_jTextFieldSearchFieldKeyReleased
+
     /**
      * @param args the command line arguments
      */
@@ -307,9 +353,10 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButtonFavorite;
     private javax.swing.JButton jButtonRefresh;
     private javax.swing.JButton jButtonRename;
-    private javax.swing.JLabel jLabelSearch;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuItem jMenuItemDelete;
     private javax.swing.JMenuItem jMenuItemFavorite;
+    private javax.swing.JMenuItem jMenuItemRefresh;
     private javax.swing.JMenuItem jMenuItemRename;
     private javax.swing.JPopupMenu jPopupMenuFRD;
     private javax.swing.JScrollPane jScrollPane2;
