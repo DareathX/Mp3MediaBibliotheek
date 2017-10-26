@@ -6,11 +6,24 @@
 package mp3.media.library;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.mp3.Mp3Parser;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -27,6 +40,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         initComponents();
         getFilesName();
         sorting();
+        noSongs();
     }
 
     public void sorting() {
@@ -45,26 +59,59 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         File[] listOfFiles = folder.listFiles(filter);
         model = (DefaultTableModel) jTableSongList.getModel();
         Object[] row = new Object[1];
+
         for (int i = 0; i < listOfFiles.length; i++) {
-            row[0] = listOfFiles[i].getName();
-            model.addRow(row);
+
+            try {
+                InputStream input = new FileInputStream(listOfFiles[i]);
+                ContentHandler handler = new DefaultHandler();
+                Metadata metadata = new Metadata();
+                Parser parser = new Mp3Parser();
+                ParseContext parseCtx = new ParseContext();
+                parser.parse(input, handler, metadata, parseCtx);
+                input.close();
+
+                row[0] = listOfFiles[i].getName();
+                String title = metadata.get("title");
+                String Artist = metadata.get("xmpDM:artist");
+                String Genre = metadata.get("xmpDM:genre");
+                String Year = metadata.get("xmpDM:releaseDate");
+                
+                model.addRow(row);
+                jTableSongList.setValueAt(title, i, 1);
+                jTableSongList.setValueAt(Artist, i, 2);
+                jTableSongList.setValueAt(Genre, i, 3);
+                jTableSongList.setValueAt(Year, i, 4);
+                
+            } catch (FileNotFoundException e) {
+            } catch (IOException | SAXException | TikaException e) {
+            }
+
+        }
+    }
+    
+    public void noSongs() {
+        if (model.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(null, "There are no mp3 files found in the Music folder",
+                    "Mp3 files not found", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
         }
     }
 
     public void favorite() {
         int row = jTableSongList.getSelectedRow();
         int column = jTableSongList.getSelectedColumn();
-        
-        if (jTableSongList.getValueAt(row, column).toString().contains("★ - ")) {
-            jTableSongList.setValueAt(jTableSongList.getValueAt(row, column).toString().substring(4), row, column);
+
+        if (jTableSongList.getValueAt(row, 0).toString().contains("★ - ")) {
+            jTableSongList.setValueAt(jTableSongList.getValueAt(row, 0).toString().substring(4), row, 0);
 
         } else {
-            String star = "★ - " + jTableSongList.getValueAt(row, column).toString();
-            jTableSongList.setValueAt(star, row, column);
+            String star = "★ - " + jTableSongList.getValueAt(row, 0).toString();
+            jTableSongList.setValueAt(star, row, 0);
         }
 
     }
-    
+
     public void search(String activeSearch) {
         TableRowSorter<DefaultTableModel> search = new TableRowSorter<>(model);
         jTableSongList.setRowSorter(search);
@@ -88,11 +135,11 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jButtonDelete = new javax.swing.JButton();
         jButtonRename = new javax.swing.JButton();
         jButtonFavorite = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPaneSongs = new javax.swing.JScrollPane();
         jTableSongList = new javax.swing.JTable();
         jTextFieldSearchField = new javax.swing.JTextField();
         jButtonRefresh = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelSearch = new javax.swing.JLabel();
 
         jMenuItemFavorite.setText("Favorite");
         jMenuItemFavorite.addActionListener(new java.awt.event.ActionListener() {
@@ -119,14 +166,12 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jPopupMenuFRD.add(jMenuItemDelete);
 
         jMenuItemRefresh.setText("Refresh");
-        jMenuItemRefresh.setActionCommand("Refresh");
         jMenuItemRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemRefreshActionPerformed(evt);
             }
         });
         jPopupMenuFRD.add(jMenuItemRefresh);
-        jMenuItemRefresh.getAccessibleContext().setAccessibleName("Refresh");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mp3 Library");
@@ -174,7 +219,10 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 jTableSongListMouseReleased(evt);
             }
         });
-        jScrollPane2.setViewportView(jTableSongList);
+        jScrollPaneSongs.setViewportView(jTableSongList);
+        if (jTableSongList.getColumnModel().getColumnCount() > 0) {
+            jTableSongList.getColumnModel().getColumn(2).setHeaderValue("Length");
+        }
 
         jTextFieldSearchField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -194,8 +242,8 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        jLabel1.setText("Search :");
+        jLabelSearch.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabelSearch.setText("Search :");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -205,7 +253,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
+                        .addComponent(jScrollPaneSongs, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -217,7 +265,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                             .addComponent(jButtonFavorite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
+                        .addComponent(jLabelSearch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(21, 21, 21))))
@@ -226,14 +274,14 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPaneSongs, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonRefresh)
                             .addComponent(jButtonFavorite)
-                            .addComponent(jLabel1))
+                            .addComponent(jLabelSearch))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonRename)
@@ -282,6 +330,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     private void jButtonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRefreshActionPerformed
         model.setRowCount(0);
         getFilesName();
+        noSongs();
     }//GEN-LAST:event_jButtonRefreshActionPerformed
 
     private void jButtonFavoriteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFavoriteActionPerformed
@@ -353,13 +402,13 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButtonFavorite;
     private javax.swing.JButton jButtonRefresh;
     private javax.swing.JButton jButtonRename;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabelSearch;
     private javax.swing.JMenuItem jMenuItemDelete;
     private javax.swing.JMenuItem jMenuItemFavorite;
     private javax.swing.JMenuItem jMenuItemRefresh;
     private javax.swing.JMenuItem jMenuItemRename;
     private javax.swing.JPopupMenu jPopupMenuFRD;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPaneSongs;
     private javax.swing.JTable jTableSongList;
     private javax.swing.JTextField jTextFieldSearchField;
     // End of variables declaration//GEN-END:variables
