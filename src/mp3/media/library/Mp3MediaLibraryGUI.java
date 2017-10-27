@@ -38,7 +38,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
 
     public Mp3MediaLibraryGUI() {
         initComponents();
-        getFilesName();
+        getFilesDetails();
         sorting();
         noSongs();
     }
@@ -48,7 +48,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jTableSongList.setRowSorter(sorter);
     }
 
-    public void getFilesName() {
+    public void getFilesDetails() {
         FilenameFilter filter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -100,7 +100,6 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
 
     public void favorite() {
         int row = jTableSongList.getSelectedRow();
-        int column = jTableSongList.getSelectedColumn();
 
         if (jTableSongList.getValueAt(row, 0).toString().contains("★ - ")) {
             jTableSongList.setValueAt(jTableSongList.getValueAt(row, 0).toString().substring(4), row, 0);
@@ -203,11 +202,11 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Title", "Length", "Artist", "Year", "Genre"
+                "Name", "Title", "Artist", "Genre", "Year"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, false
+                true, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -220,15 +219,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
             }
         });
         jScrollPaneSongs.setViewportView(jTableSongList);
-        if (jTableSongList.getColumnModel().getColumnCount() > 0) {
-            jTableSongList.getColumnModel().getColumn(2).setHeaderValue("Length");
-        }
 
-        jTextFieldSearchField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldSearchFieldActionPerformed(evt);
-            }
-        });
         jTextFieldSearchField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextFieldSearchFieldKeyReleased(evt);
@@ -329,7 +320,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
 
     private void jButtonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRefreshActionPerformed
         model.setRowCount(0);
-        getFilesName();
+        getFilesDetails();
         noSongs();
     }//GEN-LAST:event_jButtonRefreshActionPerformed
 
@@ -344,10 +335,6 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     private void jMenuItemRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRefreshActionPerformed
         jButtonRefreshActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemRefreshActionPerformed
-
-    private void jTextFieldSearchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldSearchFieldActionPerformed
-
-    }//GEN-LAST:event_jTextFieldSearchFieldActionPerformed
 
     private void jTextFieldSearchFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSearchFieldKeyReleased
         String activeSearch = jTextFieldSearchField.getText();
