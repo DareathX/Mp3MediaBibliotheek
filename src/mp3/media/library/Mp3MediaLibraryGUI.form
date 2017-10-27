@@ -76,7 +76,7 @@
                       <Component id="jScrollPaneSongs" pref="839" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jButtonRefresh" max="32767" attributes="0"/>
@@ -88,6 +88,16 @@
                           <Component id="jButtonDelete" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jButtonResume" max="32767" attributes="0"/>
+                          <Component id="jButtonPlay" min="-2" pref="73" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jButtonStop" max="32767" attributes="0"/>
+                          <Component id="jButtonPause" min="-2" pref="73" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
                       <Component id="jLabelSearch" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jTextFieldSearchField" min="-2" pref="287" max="-2" attributes="0"/>
@@ -105,20 +115,38 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButtonRefresh" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonFavorite" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabelSearch" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButtonRename" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonDelete" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="jTextFieldSearchField" min="-2" pref="39" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
-                  <Component id="jTextFieldSearchField" alignment="0" min="-2" pref="39" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jButtonRefresh" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonFavorite" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelSearch" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jButtonRename" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonDelete" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jButtonPause" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonPlay" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jButtonStop" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonResume" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="0" pref="16" max="32767" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace pref="15" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -228,6 +256,38 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Search :"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonPlay">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Play"/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButtonPlayMouseReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonStop">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Stop"/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButtonStopMouseReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonPause">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Pause"/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButtonPauseMouseReleased"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonResume">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Resume"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonResumeActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

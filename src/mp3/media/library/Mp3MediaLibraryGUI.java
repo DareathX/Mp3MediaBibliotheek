@@ -5,12 +5,15 @@
  */
 package mp3.media.library;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +27,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import javax.swing.JOptionPane;
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 
 /**
  *
@@ -31,9 +36,14 @@ import javax.swing.JOptionPane;
  */
 public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Mp3MediaLibraryGUI
-     */
+    FileInputStream FIS;
+    BufferedInputStream BIS;
+    public Player player;
+    public long pauseLocation;
+    public long songTotalLength;
+    public String fileLocation;
+    public boolean running = false;
+
     DefaultTableModel model;
 
     public Mp3MediaLibraryGUI() {
@@ -76,20 +86,20 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 String Artist = metadata.get("xmpDM:artist");
                 String Genre = metadata.get("xmpDM:genre");
                 String Year = metadata.get("xmpDM:releaseDate");
-                
+
                 model.addRow(row);
                 jTableSongList.setValueAt(title, i, 1);
                 jTableSongList.setValueAt(Artist, i, 2);
                 jTableSongList.setValueAt(Genre, i, 3);
                 jTableSongList.setValueAt(Year, i, 4);
-                
+
             } catch (FileNotFoundException e) {
             } catch (IOException | SAXException | TikaException e) {
             }
 
         }
     }
-    
+
     public void noSongs() {
         if (model.getRowCount() == 0) {
             JOptionPane.showMessageDialog(null, "There are no mp3 files found in the Music folder",
@@ -117,6 +127,92 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         search.setRowFilter(RowFilter.regexFilter("(?i)" + activeSearch));
     }
 
+    public void stopSong() {
+        if (player != null) {
+            player.close();
+
+            pauseLocation = 0;
+            songTotalLength = 0;
+            fileLocation = null;
+
+        }
+    }
+
+    public void pauseSong() {
+        if (player != null) {
+            try {
+                pauseLocation = FIS.available();
+                player.close();
+            } catch (IOException ex) {
+
+            }
+        }
+
+    }
+
+    public void playSong() {
+
+        if (!running) {
+            running = true;
+            try {
+                int row = jTableSongList.getSelectedRow();
+                String path = jTableSongList.getValueAt(row, 0).toString();
+                FIS = new FileInputStream(System.getProperty("user.home").concat("\\Music\\" + path));
+                BIS = new BufferedInputStream(FIS);
+                player = new Player(BIS);
+
+                songTotalLength = FIS.available();
+
+                fileLocation = path + "";
+
+            } catch (FileNotFoundException | JavaLayerException ex) {
+
+            } catch (IOException ex) {
+                Logger.getLogger(Mp3MediaLibraryGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        player.play();
+                        running = false;
+                    } catch (JavaLayerException ex) {
+                        Logger.getLogger(Mp3MediaLibraryGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }.start();
+        }
+    }
+
+    public void resumeSong() {
+
+        if (!running) {
+            running = true;
+            try {
+                FIS = new FileInputStream(System.getProperty("user.home").concat("\\Music\\" + fileLocation));
+                BIS = new BufferedInputStream(FIS);
+                player = new Player(BIS);
+
+                FIS.skip(songTotalLength - pauseLocation);
+
+            } catch (FileNotFoundException | JavaLayerException ex) {
+            } catch (IOException ex) {
+                Logger.getLogger(Mp3MediaLibraryGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        player.play();
+                        running = false;
+                    } catch (JavaLayerException ex) {
+                        Logger.getLogger(Mp3MediaLibraryGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }.start();
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -139,6 +235,10 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jTextFieldSearchField = new javax.swing.JTextField();
         jButtonRefresh = new javax.swing.JButton();
         jLabelSearch = new javax.swing.JLabel();
+        jButtonPlay = new javax.swing.JButton();
+        jButtonStop = new javax.swing.JButton();
+        jButtonPause = new javax.swing.JButton();
+        jButtonResume = new javax.swing.JButton();
 
         jMenuItemFavorite.setText("Favorite");
         jMenuItemFavorite.addActionListener(new java.awt.event.ActionListener() {
@@ -236,6 +336,34 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jLabelSearch.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabelSearch.setText("Search :");
 
+        jButtonPlay.setText("Play");
+        jButtonPlay.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jButtonPlayMouseReleased(evt);
+            }
+        });
+
+        jButtonStop.setText("Stop");
+        jButtonStop.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jButtonStopMouseReleased(evt);
+            }
+        });
+
+        jButtonPause.setText("Pause");
+        jButtonPause.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jButtonPauseMouseReleased(evt);
+            }
+        });
+
+        jButtonResume.setText("Resume");
+        jButtonResume.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonResumeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -246,7 +374,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPaneSongs, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
                         .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButtonRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -256,6 +384,14 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                             .addComponent(jButtonFavorite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButtonDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButtonResume, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonPlay, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButtonStop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonPause, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(40, 40, 40)
                         .addComponent(jLabelSearch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -269,16 +405,28 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButtonRefresh)
-                            .addComponent(jButtonFavorite)
-                            .addComponent(jLabelSearch))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButtonRename)
-                            .addComponent(jButtonDelete)))
-                    .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(15, Short.MAX_VALUE))
+                        .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jButtonRefresh)
+                                    .addComponent(jButtonFavorite)
+                                    .addComponent(jLabelSearch))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jButtonRename)
+                                    .addComponent(jButtonDelete)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jButtonPause)
+                                    .addComponent(jButtonPlay))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jButtonStop)
+                                    .addComponent(jButtonResume))))
+                        .addGap(0, 16, Short.MAX_VALUE))))
         );
 
         pack();
@@ -341,6 +489,22 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         search(activeSearch);
     }//GEN-LAST:event_jTextFieldSearchFieldKeyReleased
 
+    private void jButtonPlayMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonPlayMouseReleased
+        playSong();
+    }//GEN-LAST:event_jButtonPlayMouseReleased
+
+    private void jButtonStopMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonStopMouseReleased
+        stopSong();
+    }//GEN-LAST:event_jButtonStopMouseReleased
+
+    private void jButtonPauseMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonPauseMouseReleased
+        pauseSong();
+    }//GEN-LAST:event_jButtonPauseMouseReleased
+
+    private void jButtonResumeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonResumeActionPerformed
+        resumeSong();
+    }//GEN-LAST:event_jButtonResumeActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -387,8 +551,12 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonDelete;
     private javax.swing.JButton jButtonFavorite;
+    private javax.swing.JButton jButtonPause;
+    private javax.swing.JButton jButtonPlay;
     private javax.swing.JButton jButtonRefresh;
     private javax.swing.JButton jButtonRename;
+    private javax.swing.JButton jButtonResume;
+    private javax.swing.JButton jButtonStop;
     private javax.swing.JLabel jLabelSearch;
     private javax.swing.JMenuItem jMenuItemDelete;
     private javax.swing.JMenuItem jMenuItemFavorite;
