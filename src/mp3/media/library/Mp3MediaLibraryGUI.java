@@ -5,6 +5,8 @@
  */
 package mp3.media.library;
 
+import java.awt.Color;
+import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -51,6 +54,17 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         getFilesDetails();
         sorting();
         noSongs();
+        bckclr();
+        icon();
+    }
+
+    public void icon() {
+        try {
+            Image i = ImageIO.read(getClass().getResource("/icon/icon.png"));
+            setIconImage(i);
+        } catch (IOException ex) {
+            Logger.getLogger(Mp3MediaLibraryGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void sorting() {
@@ -184,6 +198,10 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         }
     }
 
+    public void bckclr() {
+        getContentPane().setBackground(new Color(224, 189, 35));
+    }
+
     public void resumeSong() {
 
         if (!running) {
@@ -239,6 +257,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
         jButtonStop = new javax.swing.JButton();
         jButtonPause = new javax.swing.JButton();
         jButtonResume = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         jMenuItemFavorite.setText("Favorite");
         jMenuItemFavorite.addActionListener(new java.awt.event.ActionListener() {
@@ -274,6 +293,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mp3 Library");
+        setBackground(new java.awt.Color(224, 189, 35));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jButtonDelete.setText("Delete");
@@ -297,6 +317,8 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
             }
         });
 
+        jTableSongList.setBackground(new java.awt.Color(224, 189, 35));
+        jTableSongList.setBorder(new javax.swing.border.MatteBorder(null));
         jTableSongList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -313,6 +335,8 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTableSongList.setGridColor(new java.awt.Color(224, 189, 35));
+        jTableSongList.setSelectionBackground(new java.awt.Color(224, 189, 35));
         jTableSongList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jTableSongListMouseReleased(evt);
@@ -364,6 +388,9 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/troll_face.png"))); // NOI18N
+        jLabel1.setText("jLabel1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -396,13 +423,19 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(21, 21, 21))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(267, 267, 267)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPaneSongs, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPaneSongs, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jTextFieldSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -426,7 +459,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jButtonStop)
                                     .addComponent(jButtonResume))))
-                        .addGap(0, 16, Short.MAX_VALUE))))
+                        .addGap(0, 7, Short.MAX_VALUE))))
         );
 
         pack();
@@ -557,6 +590,7 @@ public class Mp3MediaLibraryGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButtonRename;
     private javax.swing.JButton jButtonResume;
     private javax.swing.JButton jButtonStop;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelSearch;
     private javax.swing.JMenuItem jMenuItemDelete;
     private javax.swing.JMenuItem jMenuItemFavorite;
